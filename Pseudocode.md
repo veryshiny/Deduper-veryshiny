@@ -31,12 +31,12 @@ Clipping can help improve the quality of alignments by focusing on the high-conf
   
 # **Examples:** :circus_tent:
 
-The unit tests are present [here](unit test folder)
+The unit tests are present [here](unit_test_folder)
 
-There is a [readme](unit test folder/readme.md) file as well.
+There is a [readme](unit_test_folder/readme.md) file to explain the different cases taken into consideration as well.
 
 
-# **Pseudocode** :round_pushpin:
+# **Pseudocode** :pumpkin:
 
 ## Step 1 : Sorting the files
 Output the header lines from the input SAM file beginning with @ into a temporary file. Then, we need to sort the files such that all the chromosomes are grouped together and then they're sorted by UMI. 
