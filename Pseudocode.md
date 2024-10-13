@@ -10,32 +10,38 @@
 
 Whet defines a PCR Duplicate:
 
-- Same alignment position 
-    • Chromosome            RNAME (SAM col 3)
-    • 5' start of read          POS (SAM col 4) + CIGAR starting/ending with 'S' (SAM col 6)
-    • Strand (strand specific?)     FLAG (SAM col 2 : BITFLAG 16)
-- Same Unique Molecular Index (UMI or “randomer”)       QNAME (SAM col 1)
+- **Same alignment position** 
+
+| Identifier | Description |
+| --- | --- |
+| Chromosome   | RNAME (SAM col 3)  |
+| 5' start of read  | POS (SAM col 4) + CIGAR  starting/ending with 'S' (SAM col 6)  |
+| Strand | FLAG (SAM col 2 : BITFLAG 16) |
+       
+- **Same Unique Molecular Index**       
+QNAME (SAM col 1)
+
+PCR duplicates are identified by 
 
 These PCR duplicates are artefacts of random extra amplification of certain reads during library prep. For downstream analyses they might cause problems while doing transcript abundance analysis while looking for genes with higher or lower expression.
  
 # **Examples:** :circus_tent:
-        Include a properly formated sorted input sam file
-        Include a properly formated expected output sam file
+        Formatted sorted test input sam file
+        Formatted sorted expected output sam file
 
-## ***Case 1*** : **2 reads are not duplicates (are on different chromosomes)**
+### ***Case 1*** : **2 reads are not duplicates (are on different chromosomes)**
 
-## ***Case 2*** : **2 reads are not duplicates (same chromosome but not same UMI)**
+### ***Case 2*** : **2 reads are not duplicates (same chromosome but not same UMI)**
 
-## ***Case 3*** : **2 reads are not duplicates (same chromosome, same UMI, not same strand)**
+### ***Case 3*** : **2 reads are not duplicates (same chromosome, same UMI, not same strand)**
 
-## ***Case 4*** : **2 reads are not duplicates (same chromosome, same UMI, same strand, not same position)**
+### ***Case 4*** : **2 reads are not duplicates (same chromosome, same UMI, same strand, not same position)**
 
-## ***Case 5*** : **2 reads are not duplicates (same chromosome, same UMI, same strand, same position :: after soft-clipping they're not the same!)**
+### ***Case 5*** : **2 reads are not duplicates (same chromosome, same UMI, same strand, same position :: after soft-clipping they're not the same!)**
 
-## ***Case 6*** : **2 reads are duplicates (same chromosome, same UMI, same strand, not same position:: but after soft-clipping they're the same!)**
+### ***Case 6*** : **2 reads are duplicates (same chromosome, same UMI, same strand, not same position:: but after soft-clipping they're the same!)**
 
-## ***Case 7*** : **2 reads are duplicates**
-
+### ***Case 7*** : **2 reads are duplicates**
 
 # **Pseudocode** :round_pushpin:
 
@@ -50,7 +56,7 @@ Two ways we could do this:
 
 ## Step 2 : Python
  
-![pseudocode](/home/varsheni/bgmp/bioinfo/Bi624/Deduper-veryshiny/pseudocode.png)
+![pseudocode](pseudocode.png)
 
 # **High-Level Functions**
     Determine high level functions
