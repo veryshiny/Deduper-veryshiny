@@ -15,7 +15,7 @@ Whet defines a PCR Duplicate:
 | Identifier | Description |
 | --- | --- |
 | Chromosome   | RNAME (SAM col 3)  |
-| 5' start of read  | POS (SAM col 4) + CIGAR  starting/ending with 'S' (SAM col 6)  |
+| 5' start of read  | POS (SAM col 4) + CIGAR  starting with 'S' (SAM col 6)  |
 | Strand | FLAG (SAM col 2 : BITFLAG 16) |
        
 - **Same Unique Molecular Index**       
@@ -27,7 +27,7 @@ PCR duplicates are identified by being present on the same position on the same 
 
 Duplicates are good during alignment as it increases coverage of particular regions. This is why its more important to remove it after aligning, also removing them during alignment could be very time and memory consuming as there would need to be 1-1 comparisions of millions of reads. 
 
-Clipping can help improve the quality of alignments by focusing on the high-confidence, well-aligned portions of the reads and discarding or ignoring the low-quality or non-aligning parts. Soft clipping retains the unaligned portions of the read in the alignment file but does not use them in the actual alignment. This means that the unaligned bases are not considered when calculating alignment scores or making downstream analyses. This is accounted for in the CIGAR string indicated by an S. We need to make sure that the actual positions of 2 reads with the same UMI, same chromosome and same strand have the same position by accounting for the CIGAR value as well.
+Clipping can help improve the quality of alignments by focusing on the high-confidence, well-aligned portions of the reads and discarding or ignoring the low-quality or non-aligning parts. Soft clipping retains the unaligned portions of the read in the alignment file but does not use them in the actual alignment. This means that the unaligned bases are not considered when calculating alignment scores or making downstream analyses. This is accounted for in the CIGAR string indicated by an S. We need to make sure that the actual positions of 2 reads with the same UMI, same chromosome and same strand have the same position by accounting for the CIGAR value as well if there is soft clipping.
 
 These PCR duplicates are artefacts of random extra amplification of certain reads during library prep. For downstream analyses they might cause problems while doing transcript abundance analysis while looking for genes with higher or lower expression.
  
@@ -53,8 +53,7 @@ Formatted sorted expected output sam file
 # **Pseudocode** :round_pushpin:
 
 ## Step 1 : Sorting the files
-
-We need to sort the files such that all the chromosomes are grouped together and then they're sorted by UMI.
+Output the header lines (referred to as title lines in pseudocode) from the input file into our actual output file / or a temporary file . Then, we need to sort the files such that all the chromosomes are grouped together and then they're sorted by UMI. 
 
 Two ways we could do this:
 
@@ -73,3 +72,63 @@ Two ways we could do this:
         Return statement
 
 ## *Function 1: Chromosome number calculator*
+
+```python
+
+def retrieve_chr_num(line: str) -> int:
+    '''Takes in a line of read feature data and outputs the chromosome number of the read'''
+    return chr_num
+Input: QNAME	0	2	76723334	36	71M	*	0	0	CCACGATC	6/EEEEEEA	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU
+
+Expected output: 2
+
+```
+
+## *Function 2: UMI calculator*
+
+```python
+
+def retrieve_UMI(line: str) -> int:
+    '''Takes in a line of read feature data and outputs the UMI of the read'''
+    return UMI
+Input: QNAME:AACGCCAT	16	2	76723334	36	71M	*	0	0	CCACGATC	6/EEEEEEA	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU
+
+Expected output:AACGCCAT 
+
+```
+
+## *Function 3: Strand checker*
+
+```python
+
+def retrieve_strand(line: str) -> int:
+    '''Takes in a line of read feature data and outputs the strand of the read'''
+    return strand 
+
+Input: QNAME:AACGCCAT	16	2	76723334	36	71M	*	0	0	CCACGATC	6/EEEEEEA	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU
+
+Expected output: minus
+
+Input: QNAME:AACGCCAT	0	2	76723334	36	71M	*	0	0	CCACGATC	6/EEEEEEA	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU
+
+Expected output: plus
+
+```
+
+## *Function 4: Position calculator*
+
+```python
+
+def retrieve_position_clipping(line: str) -> int:
+    '''Takes in a line of read feature data and outputs the actual left-most position of the read'''
+    return actual_position
+
+Input: QNAME:AACGCCAT	16	2	76723334	36	71M	*	0	0	CCACGATC	6/EEEEEEA	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU
+
+Expected output:  36
+
+Input: QNAME:AACGCCAT	16	2	76723334	36	1S71M	*	0	0	CCACGATC	6/EEEEEEA	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU
+
+Expected output:  35
+
+```
