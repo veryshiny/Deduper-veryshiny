@@ -30,24 +30,11 @@ Clipping can help improve the quality of alignments by focusing on the high-conf
 
   
 # **Examples:** :circus_tent:
-        
-Formatted sorted test [input sam file]
 
-Formatted sorted expected [output sam file]
+The unit tests are present [here](unit test folder)
 
-### ***Case 1*** : **2 reads are not duplicates (are on different chromosomes)**
+There is a [readme](unit test folder/readme.md) file as well.
 
-### ***Case 2*** : **2 reads are not duplicates (same chromosome but not same UMI)**
-
-### ***Case 3*** : **2 reads are not duplicates (same chromosome, same UMI, not same strand)**
-
-### ***Case 4*** : **2 reads are not duplicates (same chromosome, same UMI, same strand, not same position)**
-
-### ***Case 5*** : **2 reads are not duplicates (same chromosome, same UMI, same strand, same position :: after soft-clipping they're not the same!)**
-
-### ***Case 6*** : **2 reads are duplicates (same chromosome, same UMI, same strand, not same position:: but after soft-clipping they're the same!)**
-
-### ***Case 7*** : **2 reads are duplicates**
 
 # **Pseudocode** :round_pushpin:
 
