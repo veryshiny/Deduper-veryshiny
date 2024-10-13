@@ -1,7 +1,7 @@
 # Unit test summary statistics
 
 |File| Number of reads |Number of Duplicate reads |
-|---|---|
+|---|---|---|
 |[test_input_file.sam](test_input_file.sam)|14|4|
 |[test_output_file.sam](test_output_file.sam)|12|2|
 
