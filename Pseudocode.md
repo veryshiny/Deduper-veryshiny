@@ -36,7 +36,7 @@ The unit tests are present [here](unit_test_folder)
 There is a [readme](unit_test_folder/readme.md) file to explain the different cases taken into consideration as well.
 
 
-# **Pseudocode** :pumpkin:
+# **Pseudocode** :apple:
 
 ## Step 1 : Sorting the files
 Output the header lines from the input SAM file beginning with @ into a temporary file. Then, we need to sort the files such that all the chromosomes are grouped together and then they're sorted by UMI. 
@@ -71,12 +71,12 @@ Expected output: 2
 
 ```python
 
-def retrieve_UMI(line: str) -> int:
+def retrieve_UMI(line: str) -> str:
     '''Takes in a line of read feature data and outputs the UMI of the read'''
     return UMI
 Input: QNAME:AACGCCAT	16	2	76723334	36	71M	*	0	0	CCACGATC	6/EEEEEEA	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU
 
-Expected output:AACGCCAT 
+Expected output: AACGCCAT 
 
 ```
 
@@ -84,7 +84,7 @@ Expected output:AACGCCAT
 
 ```python
 
-def retrieve_strand(line: str) -> int:
+def retrieve_strand(line: str) -> str:
     '''Takes in a line of read feature data and outputs the strand of the read'''
     return strand 
 
