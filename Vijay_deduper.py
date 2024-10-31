@@ -81,7 +81,7 @@ def retrieve_position_clipping_cigar(line: str):
  
     return actual_position
 
-print(retrieve_position_clipping_cigar(fake_cigar))
+#print(retrieve_position_clipping_cigar(fake_cigar))
 
 set_UMIs=set()
 for line in UMI_file:
