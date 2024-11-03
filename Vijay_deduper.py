@@ -53,12 +53,8 @@ def retrieve_position_clipping_cigar(line: str):
     cigar=line.split('\t')[5]
     og_position=int(line.split('\t')[3])
     strand=retrieve_strand(line)
-    dict_cigar={}
-    dict_cigar['D']=0
-    dict_cigar['N']=0 
-    dict_cigar['I']=0
-    dict_cigar['S']=0 
-    dict_cigar['M']=0 
+    dict_cigar={'D':0,'N':0,'I':0,'S':0,'M':0,'X':0,
+                '=':0,'H':0,'P':0}
     if strand=="+":
         if 'S' in cigar:
             if cigar.split('S')[0].isdigit():
