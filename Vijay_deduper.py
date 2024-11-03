@@ -56,6 +56,9 @@ def retrieve_position_clipping_cigar(line: str):
     dict_cigar={}
     dict_cigar['D']=0
     dict_cigar['N']=0 
+    dict_cigar['I']=0
+    dict_cigar['S']=0 
+    dict_cigar['M']=0 
     if strand=="+":
         if 'S' in cigar:
             if cigar.split('S')[0].isdigit():
@@ -72,10 +75,8 @@ def retrieve_position_clipping_cigar(line: str):
         else:
             S_value = 0
         for tuple in match:
-            if tuple[1] not in dict_cigar:
-                dict_cigar[tuple[1]]=int(tuple[0])
-            else:
-                dict_cigar[tuple[1]]=dict_cigar[tuple[1]]+int(tuple[0])
+
+            dict_cigar[tuple[1]]=dict_cigar[tuple[1]]+int(tuple[0])
         #print(dict_cigar)                   
         actual_position= og_position-1+S_value+dict_cigar["M"]+dict_cigar["D"]+dict_cigar["N"]
  
@@ -93,25 +94,42 @@ for line in UMI_file:
 
 set_umi_str_position=set()
 chr_num= ""
-
+print_number_chromosome=1
 with open(output,"w") as op: ##to get the multiple lines on a single line
     with open(file_input,"r") as file:
+        number_unknown_UMI= 0
+        number_dupes=0
+        number_unique=0
+        number_header=0
+        first_line=True
         for line in file:
             if line.startswith('@'):
                 op.writelines(line)
+                number_header+=1
             else:
                 UMI=retrieve_UMI(line)
                 strand=retrieve_strand(line)
                 actual_position= retrieve_position_clipping_cigar(line)
                 if UMI not in set_UMIs:
+                    number_unknown_UMI+= 1
                     continue
                 if chr_num != retrieve_chr_num(line):
+                    
+                    print(chr_num,print_number_chromosome,sep="\t")
+                    print_number_chromosome=1
                     chr_num = retrieve_chr_num(line)
                     set_umi_str_position=set()
                     set_umi_str_position.add((UMI,strand,actual_position))
                     op.writelines(line)
+                    number_unique+=1
                 else:
                     if (UMI,strand,actual_position) not in set_umi_str_position:
                         set_umi_str_position.add((UMI,strand,actual_position))
                         op.writelines(line)
-                
+                        number_unique+=1
+                        print_number_chromosome+=1
+
+                    else:
+                        number_dupes+=1
+
+print("\nHeader lines =",number_header,"\nUnique reads =",number_unique,"\nNumber of unknown UMIs =",number_unknown_UMI,"\nNumber of duplicates =",number_dupes)               
