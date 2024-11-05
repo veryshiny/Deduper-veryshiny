@@ -4,11 +4,10 @@
 
 #test file! WRITE THE STATEMENT
 #./Vijay_deduper.py -f unit_test_folder/test_input_file.sam -u STL96.txt -o output.sam
+#Remember that the sam file inpput needs to be sorted by chromosome!
+#python -m cProfile -o output_filename.pstats ./Vijay_deduper_copy.py -u STL96.txt -f sorted_C1_SE_uniqueAlign.sam -o deduper_C1_SE_uniqAlign.sam
 
 import argparse
-import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.colors as colors
 import re
 
 def get_args():
@@ -24,19 +23,19 @@ UMI_file=open(args.umi,"r")
 output= args.outfile
 file_input=args.file
 
-def retrieve_chr_num(line: str) -> int:
-    '''Takes in a line of read feature data and outputs the chromosome number of the read'''
-    chr_num= line.split('\t')[2]
-    return chr_num
+#def retrieve_chr_num(line: str) -> str:
+#    '''Takes in a line of read feature data and outputs the chromosome number of the read'''
+#    chr_num= line.split('\t')[2]
+#    return chr_num
 
-def retrieve_UMI(line: str) -> str:
-    '''Takes in a line of read feature data and outputs the UMI of the read'''
-    UMI = line.split('\t')[0].split(':')[-1]
-    return UMI
+#def retrieve_UMI(line: str) -> str:
+#    '''Takes in a line of read feature data and outputs the UMI of the read'''
+#    UMI = line.split('\t')[0].split(':')[-1]
+#    return UMI
 
-def retrieve_strand(line: str) -> str:
+def retrieve_strand(flag: int) -> str:
     '''Takes in a line of read feature data and outputs the strand of the read'''
-    flag=int(line.split('\t')[1])
+    #flag=int(line.split('\t')[1])
             
     if ((flag & 16) != 16):
         strand="+"
@@ -48,28 +47,30 @@ def retrieve_strand(line: str) -> str:
 
 fake_cigar="NS500451:154:HWKTMBGXX:1:11101:94095:71756:AACGCCAT	0	2	76875967	36	1S72M	*	0	0	GTGGGATGAGGCGCTCTTTTATATTGAGTTGGGCTGTGCAGGAGTCTTTTCCCACTTCATTGACGGCGTAG	6<EEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU	XS:A:-	XG:Z:A"
 
-def retrieve_position_clipping_cigar(line: str):
+def retrieve_position_clipping_cigar(cigar,og_position,strand: str):
     '''Takes in a line of read feature data and outputs the actual left-most position of the read'''
-    cigar=line.split('\t')[5]
-    og_position=int(line.split('\t')[3])
-    strand=retrieve_strand(line)
-    dict_cigar={'D':0,'N':0,'I':0,'S':0,'M':0,'X':0,
-                '=':0,'H':0,'P':0}
+    #cigar=line.split('\t')[5]
+    #og_position=int(line.split('\t')[3])
+    S_value=0
     if strand=="+":
         if 'S' in cigar:
-            if cigar.split('S')[0].isdigit():
-                actual_position = og_position - int(cigar.split('S')[0]) 
+            number_S=cigar.split('S')[0]
+            if number_S.isdigit():
+                actual_position = og_position - int(number_S) 
                 
             else:
                 actual_position= og_position
         else:
             actual_position= og_position    
     else:
-        match = re.findall(r'(\d+)(\w)', cigar)
-        if match[-1][1]=='S':
+        dict_cigar={'D':0,'N':0,'I':0,'S':0,'M':0,'X':0,
+                '=':0,'H':0,'P':0}
+        
+        match = re.compile(r'(\d+)(\w)').findall(cigar)
+        if cigar[-1]=='S':
             S_value = int(match [-1][0] )
-        else:
-            S_value = 0
+                
+        
         for tuple in match:
 
             dict_cigar[tuple[1]]=dict_cigar[tuple[1]]+int(tuple[0])
@@ -78,7 +79,7 @@ def retrieve_position_clipping_cigar(line: str):
  
     return actual_position
 
-#print(retrieve_position_clipping_cigar(fake_cigar))
+#print(retrieve_position_clipping_cigar(fake_cigar,retrieve_strand(fake_cigar)))
 
 set_UMIs=set()
 for line in UMI_file:
@@ -88,44 +89,54 @@ for line in UMI_file:
 #print(set_UMIs)
 
 
-set_umi_str_position=set()
-chr_num= ""
-print_number_chromosome=1
+set_umi_str_position_positive=set()
+set_umi_str_position_negative=set()
+
+chr_num= "1"
+print_number_chromosome=0
 with open(output,"w") as op: ##to get the multiple lines on a single line
     with open(file_input,"r") as file:
         number_unknown_UMI= 0
         number_dupes=0
         number_unique=0
         number_header=0
-        first_line=True
+        #header=True
         for line in file:
             if line.startswith('@'):
-                op.writelines(line)
+                op.write(line)
                 number_header+=1
             else:
-                UMI=retrieve_UMI(line)
-                strand=retrieve_strand(line)
-                actual_position= retrieve_position_clipping_cigar(line)
-                if UMI not in set_UMIs:
-                    number_unknown_UMI+= 1
-                    continue
-                if chr_num != retrieve_chr_num(line):
+                #header = False
+                split_line=line.split('\t')
+                UMI=split_line[0].split(':')[-1]
+                if chr_num != split_line[2]:
+                    set_umi_str_position_negative=set()
+                    set_umi_str_position_positive=set()
                     
                     print(chr_num,print_number_chromosome,sep="\t")
-                    print_number_chromosome=1
-                    chr_num = retrieve_chr_num(line)
-                    set_umi_str_position=set()
-                    set_umi_str_position.add((UMI,strand,actual_position))
-                    op.writelines(line)
-                    number_unique+=1
-                else:
-                    if (UMI,strand,actual_position) not in set_umi_str_position:
-                        set_umi_str_position.add((UMI,strand,actual_position))
-                        op.writelines(line)
+                    chr_num=split_line[2]
+                    print_number_chromosome=0
+                if UMI in set_UMIs:
+                    strand=retrieve_strand(int(split_line[1]))
+                    actual_position= retrieve_position_clipping_cigar(split_line[5],int(split_line[3]),strand)
+                    
+                    if strand=='+': 
+                        if(UMI,actual_position) not in set_umi_str_position_positive:
+                            op.write(line)
+                            set_umi_str_position_positive.add((UMI,actual_position))
+                            number_unique+=1
+                            print_number_chromosome+=1
+                        else:
+                            number_dupes+=1
+                    elif (UMI,actual_position) not in set_umi_str_position_negative:
+                        op.write(line)
+                        set_umi_str_position_negative.add((UMI,actual_position))
                         number_unique+=1
                         print_number_chromosome+=1
-
                     else:
                         number_dupes+=1
+                else:
+                    number_unknown_UMI+=1   
 
-print("\nHeader lines =",number_header,"\nUnique reads =",number_unique,"\nNumber of unknown UMIs =",number_unknown_UMI,"\nNumber of duplicates =",number_dupes)               
+print("\nHeader lines =",number_header,"\nUnique reads =",number_unique,"\nNumber of unknown UMIs =",number_unknown_UMI,"\nNumber of duplicates =",number_dupes)      
+        
