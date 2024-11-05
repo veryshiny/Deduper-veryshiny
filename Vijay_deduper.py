@@ -47,6 +47,7 @@ def retrieve_strand(flag: int) -> str:
 
 fake_cigar="NS500451:154:HWKTMBGXX:1:11101:94095:71756:AACGCCAT	0	2	76875967	36	1S72M	*	0	0	GTGGGATGAGGCGCTCTTTTATATTGAGTTGGGCTGTGCAGGAGTCTTTTCCCACTTCATTGACGGCGTAG	6<EEEEEEEEEEEEAEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE	MD:Z:71	NH:i:1	HI:i:1	NM:i:0	SM:i:36	XQ:i:40	X2:i:0	XO:Z:UU	XS:A:-	XG:Z:A"
 
+pattern = re.compile(r'(\d+)(\w)')
 def retrieve_position_clipping_cigar(cigar,og_position,strand: str):
     '''Takes in a line of read feature data and outputs the actual left-most position of the read'''
     #cigar=line.split('\t')[5]
@@ -57,7 +58,6 @@ def retrieve_position_clipping_cigar(cigar,og_position,strand: str):
             number_S=cigar.split('S')[0]
             if number_S.isdigit():
                 actual_position = og_position - int(number_S) 
-                
             else:
                 actual_position= og_position
         else:
@@ -65,18 +65,13 @@ def retrieve_position_clipping_cigar(cigar,og_position,strand: str):
     else:
         dict_cigar={'D':0,'N':0,'I':0,'S':0,'M':0,'X':0,
                 '=':0,'H':0,'P':0}
-        
-        match = re.compile(r'(\d+)(\w)').findall(cigar)
+        match = pattern.findall(cigar)
         if cigar[-1]=='S':
             S_value = int(match [-1][0] )
-                
-        
         for tuple in match:
-
             dict_cigar[tuple[1]]=dict_cigar[tuple[1]]+int(tuple[0])
         #print(dict_cigar)                   
         actual_position= og_position-1+S_value+dict_cigar["M"]+dict_cigar["D"]+dict_cigar["N"]
- 
     return actual_position
 
 #print(retrieve_position_clipping_cigar(fake_cigar,retrieve_strand(fake_cigar)))
