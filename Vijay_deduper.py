@@ -59,7 +59,6 @@ def retrieve_position_clipping_cigar(cigar,og_position,strand: str):
             number_S=cigar.split('S')[0]
             if number_S.isdigit():
                 actual_position = og_position - int(number_S) 
-                
             else:
                 actual_position= og_position
         else:
@@ -67,18 +66,14 @@ def retrieve_position_clipping_cigar(cigar,og_position,strand: str):
     else:
         dict_cigar={'D':0,'N':0,'I':0,'S':0,'M':0,'X':0,
                 '=':0,'H':0,'P':0}
-        
+
         match = pattern.findall(cigar)
         if cigar[-1]=='S':
             S_value = int(match [-1][0] )
-                
-        
         for tuple in match:
-
             dict_cigar[tuple[1]]=dict_cigar[tuple[1]]+int(tuple[0])
         #print(dict_cigar)                   
         actual_position= og_position-1+S_value+dict_cigar["M"]+dict_cigar["D"]+dict_cigar["N"]
- 
     return actual_position
 
 #print(retrieve_position_clipping_cigar(fake_cigar,retrieve_strand(fake_cigar)))
@@ -139,6 +134,8 @@ with open(output,"w") as op: ##to get the multiple lines on a single line
                         number_dupes+=1
                 else:
                     number_unknown_UMI+=1   
+
+print(chr_num,print_number_chromosome,sep="\t")
 
 print("\nHeader lines =",number_header,"\nUnique reads =",number_unique,"\nNumber of unknown UMIs =",number_unknown_UMI,"\nNumber of duplicates =",number_dupes)      
         
