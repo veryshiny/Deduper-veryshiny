@@ -2,7 +2,7 @@
 
 #command to run: 
 
-#./Vijay_deduper.py -f unit_test_folder/test_input_file.sam -u STL96.txt -o output.sam
+#./Vijay_deduper_super_deluxe.py -f unit_test_folder/test_input_file.sam -u STL96.txt -o output.sam
 #Remember that the sam file input needs to be sorted by chromosome!
 #python -m cProfile -o output_filename.pstats ./Vijay_deduper_copy.py -u STL96.txt -f sorted_C1_SE_uniqueAlign.sam -o deduper_C1_SE_uniqAlign.sam
 
@@ -27,6 +27,7 @@ r1_sam=args.file1
 r2_sam=args.file2
 UMI_error_correction= args.umierrorcorrection
 duplicate_choice=args.duplicatechoice
+
 paired_end=args.paired_end
 UMI_file=open(args.umi,"r")
 output= args.outfile
@@ -97,7 +98,7 @@ for line in UMI_file:
 set_umi_position_positive=set()
 set_umi_position_negative=set()
 positive_dupe_chooser=set()
-positive_dupe_chooser=set()
+negative_dupe_chooser=set()
 
 
 chr_num= "1"
@@ -122,8 +123,12 @@ if paired_end==False :
                     split_line=line.split('\t')
                     UMI=split_line[0].split(':')[-1]
                     if chr_num != split_line[2]:
-                        set_umi_position_negative=set()
-                        set_umi_position_positive=set()
+                        if duplicate_choice =="None":
+                            set_umi_position_negative=set()
+                            set_umi_position_positive=set()
+                        else:
+                            positive_dupe_chooser=set()
+                            negative_dupe_chooser=set()
                         print(chr_num,print_number_chromosome,sep="\t")
                         chr_num=split_line[2]
                         print_number_chromosome=0
@@ -148,6 +153,6 @@ if paired_end==False :
                             number_dupes+=1
                     else:
                         number_unknown_UMI+=1   
-
-    print("\nHeader lines =",number_header,"\nUnique reads =",number_unique,"\nNumber of unknown UMIs =",number_unknown_UMI,"\nNumber of duplicates =",number_dupes)      
+print(chr_num,print_number_chromosome,sep="\t")
+print("\nHeader lines =",number_header,"\nUnique reads =",number_unique,"\nNumber of unknown UMIs =",number_unknown_UMI,"\nNumber of duplicates =",number_dupes)      
             
