@@ -1,7 +1,6 @@
 # Deduper
 
 ## Part 1
-Use this repo template to create your own Deduper repo - you should do all your work in your own repository. Please name it `Deduper-<github-user-name>`.
 
 Write up a strategy for writing a Reference Based PCR Duplicate Removal tool. That is, given a sorted sam file of uniquely mapped reads, remove all PCR duplicates (retain only a single copy of each read). Develop a strategy that avoids loading everything into memory. You should not write any code for this portion of the assignment. Be sure to:
 - Define the problem
@@ -44,10 +43,10 @@ Given a SAM file of uniquely mapped reads, and a text file containing the known 
     - Be sure to utilize functions appropriately
     - Appropriately comment code and include doc strings
 - **CHALLENGE**: In a **separate branch**, implement options for
-    - Single-end vs paired-end
-    - Known UMIs vs randomers
-    - Error correction of known UMIs
-    - Choice of duplicate written to file
+    - Single-end vs paired-end 
+    - Known UMIs vs randomers DONE!
+    - Error correction of known UMIs DONE!
+    - Choice of duplicate written to file DONE!
     
 You MUST:
 - Write Python 3.12 compatible code
