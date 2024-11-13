@@ -17,7 +17,7 @@ def get_args():
     parser.add_argument("-o", "--outfile", help="output file", type= str)
     parser.add_argument("-p", "--paired_end", help="sam file for paired end data", action='store_true')
     parser.add_argument("-e", "--umierrorcorrection", help="use flag if you want umis to be error corrected; uses average phred score and length of reads as filter", action='store_true')
-    parser.add_argument("-r", "--randomers", help="use flag if you want to use randomers instead of a known UMI list", action='store_true')
+    parser.add_argument("-r", "--randomers", help="use flag if you want to use randomers of a certain length instead of a known UMI list")
 
     return parser.parse_args()
 
@@ -28,7 +28,7 @@ paired_end=args.paired_end
 UMI_file=open(args.umi,"r")
 output= args.outfile
 file_input=args.file
-randomners=args.randomers
+randomners= int(args.randomers)
 
 #def retrieve_chr_num(line: str) -> str:
 #    '''Takes in a line of read feature data and outputs the chromosome number of the read'''
@@ -99,7 +99,7 @@ if randomners==False:
         list_UMIs.append(line)
 else:
     Base_array="ATCG"
-    permut= list(itertools.product(['A', 'C', 'T','G'], repeat=8))
+    permut= list(itertools.product(['A', 'C', 'T','G'], repeat=randomners))
     def convertTuple(tup):
             # initialize an empty string
         str = ''
