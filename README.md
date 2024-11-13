@@ -12,8 +12,9 @@ The Python code assumes a sorted sam file (you can use `samtools sort` first!)
     - Highest quality and longest duplicate written to file 
 - Considerations:
     - Millions of reads – avoids loading everything into memory! 
-    - Runs in less than 2 minutes (even with all the )
+    - Runs in less than 2 minutes (even with all the new add-ons)
     - Outputs a properly formatted SAM file
+
 **NEW FEATURES COMING SOON**
     - Single-end and paired-end 
 
