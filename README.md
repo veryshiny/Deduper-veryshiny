@@ -16,7 +16,7 @@ The Python code assumes a sorted sam file (you can use `samtools sort` first!)
     - Outputs a properly formatted SAM file
 
 - **NEW FEATURES COMING SOON**
-    - Single-end and paired-end 
+    - Paired-end deduping!
 
     
 - Includes the following argparse options
@@ -26,7 +26,7 @@ The Python code assumes a sorted sam file (you can use `samtools sort` first!)
     - ```-e```, ```--umierrorcorrection```: designates whether the user wants error correction of UMIs
     - ```-r```, ```--randomers```: designates that the UMIs should be considered as randomers of a certain length instead of a provided list
     - ```-p```, ```--paired_end```: designates absolute file path to sorted sam file with paired-end data
-    - ```-h```, ```--help```: prints a USEFUL help message
+    - ```-h```, ```--help```: prints a useful help message
         - That is, the code is able to run (in a single step) if given a command in the format:
           ```
           ./Vijay_deduper_super_deluxe.py -u STL96.txt -f <in.sam> -o <out.sam>
